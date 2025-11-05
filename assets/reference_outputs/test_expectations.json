@@ -1,0 +1,111 @@
+{
+    "compliance_tests": {
+      "itu_r_bs1196_1khz_sine_-20db": {
+        "expected_snr_min": 45.0,
+        "expected_bitrate_tolerance": 0.1,
+        "test_standard": "ITU-R BS.1196-7",
+        "description": "1 kHz sine wave at -20 dBFS for basic codec performance verification",
+        "pass_criteria": {
+          "snr_db": ">= 45.0",
+          "bitrate_error": "<= 10%",
+          "thd_percent": "<= 0.1"
+        }
+      },
+      "itu_r_bs1196_multi_tone_-12db": {
+        "expected_snr_min": 40.0,
+        "expected_bitrate_tolerance": 0.15,
+        "test_standard": "ITU-R BS.1196-7",
+        "description": "Multi-tone signal (440, 1000, 3000, 8000 Hz) for complex content testing",
+        "pass_criteria": {
+          "snr_db": ">= 40.0",
+          "bitrate_error": "<= 15%",
+          "frequency_balance": "±3 dB across test tones"
+        }
+      },
+      "ebu_r128_reference_-23lufs": {
+        "expected_snr_min": 42.0,
+        "expected_bitrate_tolerance": 0.1,
+        "test_standard": "EBU R128",
+        "description": "Reference tone at -23 LUFS for loudness standard compliance",
+        "pass_criteria": {
+          "snr_db": ">= 42.0",
+          "bitrate_error": "<= 10%",
+          "loudness_preservation": "±0.5 LUFS"
+        }
+      },
+      "dynamic_range_tests": {
+        "levels_db": [-60, -40, -20, -12, -6, -3],
+        "requirements": {
+          "-60db": {
+            "expected_snr_min": 15.0,
+            "description": "Very low level signal handling"
+          },
+          "-40db": {
+            "expected_snr_min": 25.0,
+            "description": "Low level signal quality"
+          },
+          "-20db": {
+            "expected_snr_min": 35.0,
+            "description": "Moderate level signal quality"
+          },
+          "-12db": {
+            "expected_snr_min": 40.0,
+            "description": "Normal operating level"
+          },
+          "-6db": {
+            "expected_snr_min": 42.0,
+            "description": "High level signal quality"
+          },
+          "-3db": {
+            "expected_snr_min": 43.0,
+            "description": "Near full-scale signal handling"
+          }
+        }
+      }
+    },
+    "quality_tests": {
+      "frequency_response": {
+        "max_variation_db": 3.0,
+        "test_frequencies": [100, 200, 500, 1000, 2000, 5000, 10000, 15000, 20000],
+        "requirements": {
+          "100hz": {"min_snr": 35.0, "notes": "Low frequency response"},
+          "1000hz": {"min_snr": 45.0, "notes": "Reference frequency"},
+          "10000hz": {"min_snr": 40.0, "notes": "High frequency preservation"},
+          "20000hz": {"min_snr": 30.0, "notes": "Nyquist region handling"}
+        },
+        "description": "Frequency response flatness across audio spectrum"
+      },
+      "complex_harmonic": {
+        "expected_snr_min": 38.0,
+        "expected_thd_max": 0.5,
+        "description": "Complex harmonic content with fundamental and overtones",
+        "harmonic_structure": {
+          "fundamental": "440 Hz",
+          "harmonics": ["880 Hz (-6dB)", "1320 Hz (-10dB)", "1760 Hz (-12dB)", "2200 Hz (-16dB)"]
+        }
+      },
+      "noise_handling": {
+        "white_noise": {
+          "expected_snr_min": 25.0,
+          "description": "White noise encoding efficiency"
+        },
+        "pink_noise": {
+          "expected_snr_min": 28.0,
+          "description": "Pink noise (1/f) encoding quality"
+        }
+      },
+      "frequency_sweep": {
+        "expected_snr_min": 30.0,
+        "sweep_range": "20 Hz to 20 kHz",
+        "description": "Logarithmic frequency sweep for dynamic content testing"
+      }
+    },
+    "stereo_tests": {
+      "stereo_center": {
+        "expected_snr_min": 44.0,
+        "description": "Mono-compatible center image",
+        "channel_balance": "±0.1 dB"
+      },
+      "stereo_left_only": {
+        "expected_snr_min": 44.0,
+        "description

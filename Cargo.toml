@@ -1,0 +1,99 @@
+[package]
+name = "aac-ld-encoder"
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name <your.email@example.com>"]
+description = "Production-level AAC-LD (Low Delay) audio encoder in Rust"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/yourusername/aac-ld-encoder"
+homepage = "https://github.com/yourusername/aac-ld-encoder"
+documentation = "https://docs.rs/aac-ld-encoder"
+readme = "README.md"
+keywords = ["audio", "codec", "aac", "encoder", "low-delay"]
+categories = ["multimedia::audio", "encoding"]
+rust-version = "1.70"
+
+[dependencies]
+# Error handling
+thiserror = "1.0"
+
+# Optional dependencies for advanced features
+[dependencies.criterion]
+version = "0.5"
+optional = true
+
+[dev-dependencies]
+criterion = "0.5"
+
+[lib]
+name = "aac_ld_encoder"
+path = "src/lib.rs"
+
+[[bin]]
+name = "aac_ld_example"
+path = "src/main.rs"
+
+[features]
+default = ["std"]
+std = []
+simd = []  # Future SIMD optimizations
+profiling = ["criterion"]  # Performance profiling features
+
+[[bench]]
+name = "encoding_benchmark"
+harness = false
+required-features = ["profiling"]
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+overflow-checks = false
+
+[profile.bench]
+opt-level = 3
+lto = true
+codegen-units = 1
+
+[profile.dev]
+opt-level = 0
+debug = true
+overflow-checks = true
+
+# Workspace configuration (if this becomes part of a larger workspace)
+[workspace]
+members = [".", "examples/*"]
+
+# Package metadata
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+# Build scripts and custom configuration
+[build-dependencies]
+# Add build dependencies here if needed for code generation
+
+# Platform-specific dependencies
+[target.'cfg(unix)'.dependencies]
+# Unix-specific dependencies
+
+[target.'cfg(windows)'.dependencies]
+# Windows-specific dependencies
+
+# Example workspace members (optional)
+# You can create separate example projects
+[[example]]
+name = "real_time_streaming"
+path = "examples/real_time_streaming.rs"
+required-features = ["std"]
+
+[[example]]
+name = "batch_encoding"
+path = "examples/batch_encoding.rs"
+required-features = ["std"]
+
+[[example]]
+name = "quality_analysis"
+path = "examples/quality_analysis.rs"
+required-features = ["profiling"]

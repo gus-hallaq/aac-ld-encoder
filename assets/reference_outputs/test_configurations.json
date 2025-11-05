@@ -1,0 +1,302 @@
+{
+    "encoder_configurations": {
+      "low_latency_speech": {
+        "sample_rate": 16000,
+        "channels": 1,
+        "bitrate": 32000,
+        "quality": 0.5,
+        "use_tns": false,
+        "use_pns": false,
+        "description": "Optimized for speech with minimal latency",
+        "target_applications": ["VoIP", "voice_chat", "low_bandwidth_communication"],
+        "expected_performance": {
+          "latency_ms": 15.0,
+          "cpu_usage": 0.15,
+          "snr_db": 30.0
+        }
+      },
+      "standard_music": {
+        "sample_rate": 44100,
+        "channels": 2,
+        "bitrate": 128000,
+        "quality": 0.7,
+        "use_tns": true,
+        "use_pns": false,
+        "description": "Balanced quality for music content",
+        "target_applications": ["music_streaming", "podcasts", "general_audio"],
+        "expected_performance": {
+          "latency_ms": 10.9,
+          "cpu_usage": 0.35,
+          "snr_db": 42.0
+        }
+      },
+      "high_quality_music": {
+        "sample_rate": 48000,
+        "channels": 2,
+        "bitrate": 192000,
+        "quality": 0.9,
+        "use_tns": true,
+        "use_pns": false,
+        "description": "High quality for critical listening",
+        "target_applications": ["studio_monitoring", "broadcast", "high_end_streaming"],
+        "expected_performance": {
+          "latency_ms": 10.0,
+          "cpu_usage": 0.5,
+          "snr_db": 48.0
+        }
+      },
+      "broadcast_surround": {
+        "sample_rate": 48000,
+        "channels": 6,
+        "bitrate": 384000,
+        "quality": 0.85,
+        "use_tns": true,
+        "use_pns": false,
+        "description": "Professional surround sound broadcasting",
+        "target_applications": ["broadcast_tv", "cinema", "immersive_audio"],
+        "expected_performance": {
+          "latency_ms": 10.0,
+          "cpu_usage": 0.8,
+          "snr_db": 45.0
+        }
+      },
+      "ultra_low_latency": {
+        "sample_rate": 48000,
+        "channels": 2,
+        "bitrate": 96000,
+        "quality": 0.6,
+        "use_tns": false,
+        "use_pns": false,
+        "description": "Minimal latency for interactive applications",
+        "target_applications": ["gaming", "live_performance", "remote_collaboration"],
+        "expected_performance": {
+          "latency_ms": 8.0,
+          "cpu_usage": 0.25,
+          "snr_db": 38.0
+        }
+      }
+    },
+    "test_matrices": {
+      "compliance_matrix": {
+        "sample_rates": [16000, 22050, 44100, 48000],
+        "channel_configs": [1, 2],
+        "bitrates": [32000, 64000, 128000, 192000],
+        "test_signals": [
+          "itu_r_bs1196_1khz_sine_-20db",
+          "itu_r_bs1196_multi_tone_-12db",
+          "ebu_r128_reference_-23lufs"
+        ],
+        "total_combinations": 96
+      },
+      "quality_matrix": {
+        "sample_rates": [44100, 48000],
+        "channel_configs": [1, 2, 6],
+        "bitrates": [64000, 96000, 128000, 192000, 256000],
+        "quality_levels": [0.4, 0.6, 0.8, 1.0],
+        "test_signals": [
+          "frequency_response_set",
+          "complex_harmonic",
+          "frequency_sweep",
+          "noise_signals"
+        ],
+        "total_combinations": 240
+      },
+      "stress_matrix": {
+        "configurations": ["low_latency_speech", "standard_music", "high_quality_music"],
+        "stress_types": [
+          "long_duration",
+          "rapid_content_changes", 
+          "concurrent_encoders",
+          "memory_pressure"
+        ],
+        "duration_minutes": [2, 10, 30],
+        "total_combinations": 36
+      },
+      "performance_matrix": {
+        "platforms": ["x86_64-linux", "x86_64-windows", "aarch64-macos"],
+        "configurations": ["ultra_low_latency", "standard_music", "broadcast_surround"],
+        "metrics": ["encoding_time", "memory_usage", "cpu_utilization", "real_time_factor"],
+        "measurement_duration": 300
+      }
+    },
+    "test_scheduling": {
+      "pr_validation": {
+        "quick_smoke_tests": {
+          "duration_minutes": 5,
+          "configurations": ["standard_music"],
+          "test_types": ["basic_encoding", "single_compliance"],
+          "pass_criteria": "No regressions > 5%"
+        },
+        "standard_validation": {
+          "duration_minutes": 20,
+          "configurations": ["low_latency_speech", "standard_music", "high_quality_music"],
+          "test_types": ["compliance_subset", "quality_subset", "basic_stress"],
+          "pass_criteria": "All critical tests pass"
+        }
+      },
+      "nightly_testing": {
+        "comprehensive_suite": {
+          "duration_hours": 4,
+          "configurations": "all",
+          "test_types": "all",
+          "pass_criteria": "98% test pass rate"
+        },
+        "performance_regression": {
+          "duration_hours": 2,
+          "baseline_comparison": true,
+          "regression_threshold": "10%",
+          "critical_metrics": ["encoding_time", "snr", "bitrate_accuracy"]
+        }
+      },
+      "release_validation": {
+        "full_compliance": {
+          "duration_hours": 8,
+          "configurations": "all_supported",
+          "test_types": "complete_compliance_suite",
+          "pass_criteria": "100% compliance test pass rate"
+        },
+        "extended_stress": {
+          "duration_hours": 12,
+          "stress_multiplier": 3,
+          "stability_requirements": "No failures over 24h continuous operation"
+        }
+      }
+    },
+    "platform_configurations": {
+      "linux_x86_64": {
+        "compiler_flags": "-O3 -march=native -mtune=native",
+        "cpu_governor": "performance",
+        "memory_allocator": "jemalloc",
+        "thread_affinity": "enabled",
+        "expected_performance_multiplier": 1.0
+      },
+      "windows_x86_64": {
+        "compiler_flags": "-O3",
+        "process_priority": "high",
+        "memory_allocator": "system",
+        "thread_affinity": "enabled",
+        "expected_performance_multiplier": 0.95
+      },
+      "macos_aarch64": {
+        "compiler_flags": "-O3 -mcpu=native",
+        "process_priority": "high",
+        "memory_allocator": "system", 
+        "thread_affinity": "disabled",
+        "expected_performance_multiplier": 1.1
+      },
+      "linux_aarch64": {
+        "compiler_flags": "-O3 -mcpu=native",
+        "cpu_governor": "performance",
+        "memory_allocator": "jemalloc",
+        "thread_affinity": "enabled",
+        "expected_performance_multiplier": 0.85
+      }
+    },
+    "environment_setup": {
+      "system_requirements": {
+        "minimum_ram_gb": 4,
+        "recommended_ram_gb": 8,
+        "minimum_cpu_cores": 2,
+        "recommended_cpu_cores": 4,
+        "storage_type": "SSD recommended for I/O tests"
+      },
+      "dependencies": {
+        "rust_version": "1.70+",
+        "system_libraries": ["libc", "libm"],
+        "development_tools": ["cargo", "rustc", "git"],
+        "optional_tools": ["valgrind", "perf", "gdb"]
+      },
+      "test_data_requirements": {
+        "total_storage_mb": 500,
+        "generation_time_minutes": 5,
+        "sample_rates": "all_supported",
+        "signal_types": "complete_set"
+      }
+    },
+    "quality_gates": {
+      "commit_gates": {
+        "unit_tests": "100% pass rate",
+        "integration_tests": "100% pass rate", 
+        "compliance_smoke": "100% pass rate",
+        "performance_smoke": "No regressions > 10%"
+      },
+      "merge_gates": {
+        "full_compliance": "100% pass rate",
+        "quality_regression": "SNR degradation < 1 dB",
+        "performance_regression": "Encoding time increase < 15%",
+        "memory_regression": "Memory usage increase < 10%"
+      },
+      "release_gates": {
+        "standards_compliance": "100% ITU-R and EBU tests pass",
+        "cross_platform": "All supported platforms tested",
+        "stress_testing": "24h continuous operation without failure",
+        "documentation": "API docs and examples updated"
+      }
+    },
+    "reporting": {
+      "test_reports": {
+        "formats": ["json", "xml", "html"],
+        "include_performance_graphs": true,
+        "include_compliance_matrix": true,
+        "include_regression_analysis": true
+      },
+      "notifications": {
+        "regression_alerts": {
+          "channels": ["email", "slack"],
+          "severity_thresholds": {
+            "critical": "Any compliance test failure",
+            "warning": "Performance regression > 10%",
+            "info": "Quality regression > 2 dB"
+          }
+        },
+        "success_notifications": {
+          "release_milestones": true,
+          "nightly_summaries": true,
+          "performance_improvements": true
+        }
+      },
+      "metrics_tracking": {
+        "historical_database": "postgresql",
+        "retention_period": "2 years",
+        "aggregation_intervals": ["daily", "weekly", "monthly"],
+        "trending_analysis": "enabled"
+      }
+    },
+    "test_data_sets": {
+      "reference_signals": {
+        "sine_waves": {
+          "frequencies_hz": [100, 200, 500, 1000, 2000, 5000, 10000, 15000, 20000],
+          "levels_dbfs": [-60, -40, -20, -12, -6, -3],
+          "duration_seconds": 5
+        },
+        "complex_signals": {
+          "multi_tone": {
+            "frequencies_hz": [440, 1000, 3000, 8000],
+            "relative_levels_db": [0, 0, 0, 0]
+          },
+          "harmonic_series": {
+            "fundamental_hz": 440,
+            "harmonics": [2, 3, 4, 5],
+            "harmonic_levels_db": [-6, -12, -18, -24]
+          }
+        },
+        "noise_signals": {
+          "white_noise": {"bandwidth_hz": "full", "level_dbfs": -20},
+          "pink_noise": {"spectrum": "1/f", "level_dbfs": -20},
+          "band_limited_noise": {"bandwidth_hz": [100, 8000], "level_dbfs": -20}
+        }
+      },
+      "real_world_content": {
+        "speech_samples": {
+          "languages": ["english", "mandarin", "spanish", "arabic"],
+          "speakers": ["male", "female", "child"],
+          "content_types": ["read_speech", "conversational", "broadcast"]
+        },
+        "music_samples": {
+          "genres": ["classical", "rock", "electronic", "jazz"],
+          "dynamics": ["quiet_classical", "loud_rock", "dynamic_range_test"],
+          "instrumentation": ["solo_piano", "full_orchestra", "electronic_synthetic"]
+        }
+      }
+    }
+  }

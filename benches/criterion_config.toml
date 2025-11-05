@@ -1,0 +1,247 @@
+# benches/criterion_config.toml - Criterion benchmark configuration
+#
+# This file configures Criterion.rs benchmarking parameters for optimal
+# performance measurement of the AAC-LD encoder.
+
+# Global Criterion configuration
+[criterion]
+
+# Measurement configuration
+measurement_time = 10  # seconds - balance between precision and speed
+warm_up_time = 3      # seconds - allow CPU frequency scaling to stabilize
+sample_size = 100     # number of samples per benchmark
+confidence_level = 0.95  # 95% confidence interval
+significance_level = 0.05  # 5% significance level for regression detection
+
+# Statistical analysis
+noise_threshold = 0.02  # 2% - threshold for detecting meaningful changes
+outlier_detection = true
+bootstrap_resamples = 100000
+
+# Output configuration
+output_directory = "target/criterion"
+html_reports = true
+csv_output = true
+json_output = true
+
+# Plotting configuration (requires gnuplot)
+plotting_backend = "gnuplot"  # or "plotters"
+plot_config = { summary_scale = "linear" }
+
+# Performance regression detection
+baseline_directory = "target/criterion/baseline"
+regression_threshold = 0.10  # 10% regression threshold
+
+# Benchmark-specific configurations
+[benchmarks]
+
+# Core encoding benchmarks
+[benchmarks.single_frame_encoding]
+measurement_time = 15
+sample_size = 200
+warm_up_time = 5
+
+[benchmarks.buffer_encoding_throughput]
+measurement_time = 20
+sample_size = 150
+
+[benchmarks.real_time_simulation]
+measurement_time = 30
+sample_size = 500
+# More samples for real-time constraint analysis
+
+# Component benchmarks
+[benchmarks.psychoacoustic_analysis]
+measurement_time = 12
+sample_size = 100
+
+[benchmarks.mdct_transform]
+measurement_time = 8
+sample_size = 150
+
+[benchmarks.quantizer_performance]
+measurement_time = 10
+sample_size = 100
+
+# Utility benchmarks (faster, less critical)
+[benchmarks.audio_utilities]
+measurement_time = 5
+sample_size = 50
+
+[benchmarks.quality_analysis]
+measurement_time = 8
+sample_size = 75
+
+# Environment-specific settings
+[environment]
+
+# CPU affinity (Linux only)
+cpu_affinity = [0, 1]  # Pin to specific CPU cores
+
+# Process priority
+process_priority = "high"  # high, normal, low
+
+# Memory configuration
+memory_limit = "2GB"  # Limit memory usage for consistent results
+
+# Frequency scaling
+disable_frequency_scaling = true  # Attempt to disable CPU frequency scaling
+
+# Hardware configuration hints
+[hardware]
+
+# Expected CPU characteristics
+cpu_cores = 8
+cpu_threads = 16
+l1_cache_kb = 32
+l2_cache_kb = 256
+l3_cache_mb = 8
+
+# Memory characteristics
+ram_gb = 16
+memory_bandwidth_gbps = 25.6
+
+# Target performance characteristics
+[targets]
+
+# Real-time performance targets
+[targets.real_time]
+max_latency_us = 10000  # 10ms maximum latency
+target_cpu_usage = 0.5  # 50% CPU usage target
+min_real_time_factor = 2.0  # Minimum 2x real-time performance
+
+# Quality targets
+[targets.quality]
+min_snr_db = 40.0  # Minimum 40 dB SNR
+max_thd_percent = 0.5  # Maximum 0.5% THD
+
+# Throughput targets per configuration
+[targets.throughput]
+
+# Samples per second targets
+mono_16khz = 160000      # 10x real-time
+stereo_44khz = 880000    # 10x real-time  
+stereo_48khz = 960000    # 10x real-time
+surround_48khz = 2880000 # 10x real-time (6 channels)
+
+# CI/CD integration settings
+[ci_cd]
+
+# Automated benchmark settings
+regression_threshold = 0.15  # Allow 15% regression in CI
+max_runtime_minutes = 45     # Maximum benchmark time in CI
+parallel_jobs = 4            # Number of parallel benchmark jobs
+
+# Notification settings
+notify_on_regression = true
+slack_webhook = "${SLACK_WEBHOOK_URL}"  # Environment variable
+email_notifications = ["dev-team@company.com"]
+
+# Baseline management
+auto_update_baseline = false  # Don't auto-update in CI
+baseline_branch = "main"      # Branch for baseline comparisons
+
+# Custom benchmark sets for different scenarios
+[benchmark_sets]
+
+# Quick smoke test (for PR checks)
+smoke_test = [
+    "single_frame_encoding/encode_frame/standard_stereo",
+    "real_time_simulation/real_time_constraint",
+    "audio_utilities/i16_to_f32"
+]
+
+# Full performance suite (for releases)
+full_suite = [
+    "single_frame_encoding",
+    "buffer_encoding_throughput", 
+    "psychoacoustic_analysis",
+    "mdct_transform",
+    "quantizer_performance",
+    "real_time_simulation"
+]
+
+# Component testing (for module changes)
+components = [
+    "psychoacoustic_analysis",
+    "mdct_transform", 
+    "quantizer_performance"
+]
+
+# Real-time focus (for latency optimization)
+real_time = [
+    "single_frame_encoding",
+    "real_time_simulation",
+    "thread_safe_encoder"
+]
+
+# Memory and utilities (for utility function changes)
+utilities = [
+    "audio_utilities",
+    "quality_analysis",
+    "encoder_initialization"
+]
+
+# Platform-specific configurations
+[platforms]
+
+# Linux-specific settings
+[platforms.linux]
+use_perf_counters = true
+cpu_governor = "performance"  # Set CPU governor if possible
+disable_aslr = true          # Disable ASLR for consistent results
+
+# macOS-specific settings  
+[platforms.macos]
+use_instruments = true       # Enable Instruments integration
+disable_spotlight = true     # Disable Spotlight during benchmarks
+
+# Windows-specific settings
+[platforms.windows]
+use_wpa = true              # Enable Windows Performance Analyzer
+disable_windows_defender = false  # Don't disable by default
+high_resolution_timer = true
+
+# Docker/container settings
+[platforms.container]
+cpu_limit = "4.0"           # Limit CPU cores
+memory_limit = "8GB"        # Limit memory
+disable_swap = true         # Disable swap for consistent timing
+
+# Reporting configuration
+[reporting]
+
+# Report formats
+formats = ["html", "json", "csv"]
+
+# Report content
+include_environment_info = true
+include_git_info = true
+include_system_info = true
+include_compiler_info = true
+
+# Historical comparison
+compare_to_baseline = true
+show_trend_analysis = true
+include_statistical_analysis = true
+
+# Custom report templates
+html_template = "custom_template.html"  # Optional custom template
+css_style = "custom_style.css"         # Optional custom styling
+
+# Export settings
+[export]
+
+# Database export (for trend analysis)
+database_url = "${BENCHMARK_DB_URL}"    # PostgreSQL/MySQL URL
+table_name = "aac_ld_benchmarks"
+
+# JSON export for external tools
+json_export_path = "benchmark_results.json"
+include_raw_data = true
+compress_output = true
+
+# CSV export for spreadsheet analysis  
+csv_export_path = "benchmark_summary.csv"
+include_confidence_intervals = true
+include_outlier_analysis = true
